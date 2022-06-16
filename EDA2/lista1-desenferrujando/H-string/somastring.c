@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int main(){
     int n, *soma;
@@ -11,13 +12,11 @@ int main(){
 
     for (int i = 0; i < n; i++){
         soma[i] = 0;
-        int cont = 0;
         scanf(" %s", string);
-        while(string[cont] != '\n'){
-            if(string[cont] > 48 && string[cont] <= 57){
-                soma[i] += (string[cont]) - '0';
+        for (int j = 0; j < strlen(string); j++){
+            if(string[j] > 48 && string[j] <= 57){
+                soma[i] += (string[j]) - '0';
             }
-            cont++;
         }
     }
 
