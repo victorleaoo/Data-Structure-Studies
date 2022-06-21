@@ -1,32 +1,65 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(){
-    int n, frequencia, ja[100000], no_vetor = 0, frequencia_dada;
+void ordvetor(int *v, int left, int right) {
+    int l, r, x, tmp;
+     
+    l = left;
+    r = right;
+    x = v[(left + right) / 2];
+     
+    while(l <= r) {
+        while(v[l] < x && l < right) {
+            l++;
+        }
+        while(v[r] > x && r > left) {
+            r--;
+        }
+        if(l <= r) {
+            tmp = v[l];
+            v[l] = v[r];
+            v[r] = tmp;
+            l++;
+            r--;
+        }
+    }
+
+    if(r > left) {
+        ordvetor(v, left, r);
+    }
+    
+    if(l < right) {
+        ordvetor(v, l, right);
+    }
+
+}
+
+int main()
+{
+    int n, i, u, freq = 0;
+    int *alunos = malloc(100000*sizeof(int));
 
     scanf("%d", &n);
 
-    for (int i = 0; i < n; i++){
-        frequencia_dada = 0;
-        scanf("%d", &frequencia);
-        if(i == 0){
-            ja[i] = frequencia;
-            no_vetor++;
-            continue;
-        }
-        for (int j = 0; j < no_vetor; j++){
-            if(frequencia == ja[j]){
-                frequencia_dada = 1;
-                break;
-            }
-        }
-        if(frequencia_dada == 0){
-            ja[i] = frequencia;
-            no_vetor++;
-        }
+    for(i = 0; i < n; i ++) {
+        scanf("%d", &alunos[i]);
     }
     
-    printf("%d", no_vetor);
+    ordvetor(alunos, 0, n - 1);
+
+    for (i = 0; i < n - 1; i ++) {
+        if (alunos[i] == alunos[i + 1]){
+            alunos[i] = -1; // se for repetido, -1
+        } 
+    }  
+        
+    for (i = 0; i < n; i ++){
+        if(alunos[i] != -1){
+            freq ++; //se não for repetido, +1 na frequência
+        } 
+    }
+    
+    printf("%d\n", freq);
 
     return 0;
 }
