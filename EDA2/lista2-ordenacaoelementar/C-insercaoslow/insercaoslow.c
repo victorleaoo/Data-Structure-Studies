@@ -1,13 +1,15 @@
+// NÃO FUNCIONA!!
+
 #include <stdio.h>
+
+#define less(A,B) (A < B)
+#define exch(A, B) {int t = B; B = A; A = t;}
+#define cmpexch(A, B) {if(less(B, A)) exch(A, B);}
 
 void insertionslow(int *vetor, int l, int r){
     for(int i = l+1; i <= r; i++){
         for(int j = i; j > l; j--){
-            if(vetor[j] < vetor[j-1]){
-                int t = vetor[j-1];
-                vetor[j-1] = vetor[j];
-                vetor[j] = t;
-            }
+            cmpexch(vetor[j-1], vetor[i]);
         }
     }
 }

@@ -1,17 +1,19 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+#define key(A){A.key}
+#define less(A,B) (A < B)
+#define exch(A, B) {int t = B; B = A; A = t;}
+#define cmpexch(A, B) {if(less(B, A)) exch(A, B);}
 
 void insertionsort(int *vetor, int l, int r){
     for(int i = r; i > l; i--){
-        if(vetor[i] < vetor[i-1]){
-            int t = vetor[i-1];
-            vetor[i-1] = vetor[i];
-            vetor[i] = t;
-        }
-    }
-    for(int i = l+2; i <= r; i++){
+        cmpexch(vetor[i-1], vetor[i]);
+    } 
+    for(int i = l+1; i <= r; i++){
         int j = i - 1;
         int tmp = vetor[j + 1]; //segura o valor
-        while(tmp < vetor[j] && j >= 0){
+        while(less(tmp, vetor[j])){
             vetor[j + 1] = vetor[j];
             j--;
         }
@@ -20,22 +22,26 @@ void insertionsort(int *vetor, int l, int r){
 }
 
 int main(void){
-    int v[1000], num, i = 0;
+    int j, i = 0, r = 10;
 
-    while (scanf("%d", &num) != EOF){
-        v[i] = num;
+    int *v = malloc(r * sizeof(int));
+
+    while(scanf("%d", &v[i]) != EOF) {
+        if(i == r-1) {
+            r = r*2;
+            v = realloc(v, r*sizeof(int));
+        }
         i++;
     }
 
     insertionsort(v, 0, i-1);
 
-    int j;
-
-    for (j = 0; j < i - 1; j++){
-        printf("%d ", v[j]); 
+    for(j = 0; j < i - 1; j ++){
+        printf("%d ", v[j]);
     }
-
+        
     printf("%d\n", v[j]);
 
+    free(v);
     return 0;
 }

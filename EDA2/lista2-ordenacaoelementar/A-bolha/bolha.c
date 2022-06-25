@@ -1,13 +1,13 @@
 #include <stdio.h>
 
+#define less(A,B) (A < B)
+#define exch(A, B) {int t = B; B = A; A = t;}
+#define cmpexch(A, B) {if(less(B, A)) exch(A, B);}
+
 void bubblesort(int *vetor, int l, int r){
     for(int i = l; i < r; i++){
         for(int j = l+1; j <= r; j++){
-            if(vetor[j] < vetor[j-1]){
-                int t = vetor[j-1];
-                vetor[j-1] = vetor[j];
-                vetor[j] = t;
-            }
+            cmpexch(vetor[j-1], vetor[j]);
         }
     }
 }
