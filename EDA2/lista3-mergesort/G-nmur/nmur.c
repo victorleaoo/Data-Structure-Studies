@@ -8,7 +8,7 @@ int *intercala(int *a, int la, int ra, int *b, int lb, int rb){
     int ta = (ra-la+1);
     int tb = (rb-lb+1);
 
-    int *c = malloc((ta+tb)*sizeof(int));
+    int *c = malloc((ta+tb+2)*sizeof(int));
 
     int lc = 0, rc = (ta+tb-1);
 
@@ -135,11 +135,11 @@ int main(void){
     // Inserção no vetor
     int *c = intercala(v, 0, novor, nmu, 0, nmui);
 
-    for(int i = 0; i <= (novor + nmui); i+=4){
+    for(int i = 0; i <= (novor + nmui+2); i+=4){
         printf("%d\n", c[i]);
     }
     
-    printf("Elementos: %d\n", (novor+nmui));
+    printf("Elementos: %d\n", (novor+nmui+2));
 
     return 0;    
 }
