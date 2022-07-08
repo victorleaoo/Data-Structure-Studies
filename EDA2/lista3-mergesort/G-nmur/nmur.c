@@ -2,35 +2,7 @@
 #include <stdlib.h>
 
 #define less(A,B) (A < B)
-
-// a e b ordenados
-int *intercala(int *a, int la, int ra, int *b, int lb, int rb){
-    int ta = (ra-la+1);
-    int tb = (rb-lb+1);
-
-    int *c = malloc((ta+tb+2)*sizeof(int));
-
-    int lc = 0, rc = (ta+tb-1);
-
-    int ia = la, ib = lb, ic = 0;
-
-    while (ia <= ra && ib <= rb){
-        if(less(a[ia], b[ib])){
-            c[ic++] = a[ia++];
-        } else{
-            c[ic++] = b[ib++];
-        }
-    }
-
-    while (ia <= ra){
-        c[ic++] = a[ia++];
-    }
-    while (ib <= rb){
-        c[ic++] = b[ib++];
-    }
-
-    return c;
-}
+#define lesseq(A,B) (A <= B)
 
 void merge(int *vetor, int l, int m, int r){
     int l1 = l, r1 = m, l1i = l1;
@@ -42,7 +14,7 @@ void merge(int *vetor, int l, int m, int r){
     int rc = r-l;
 
     while (l1i <= r1 && l2i <= r2){
-        if(less(vetor[l1i], vetor[l2i])){
+        if(lesseq(vetor[l1i], vetor[l2i])){
             c[ci++] = vetor[l1i++];
         } else{
             c[ci++] = vetor[l2i++];
@@ -72,30 +44,63 @@ void mergesort(int *vetor, int l, int r){
     merge(vetor, l, meio, r); // junta os dois vetores
 }
 
-int buscaBinaria(int *vetor, int r, int valor) {
-    int e = -1, d = r, m;
-
-    while (e < d - 1) {
-        m = (e + d)/2;
-
-        if (vetor[m] < valor){
-            e = m;
+void intercala(int *v1, int r1, int *v2, int r2)
+{
+    int *c = malloc((r1 + r2) * sizeof(int));
+    int i = 0, j = 0, k = 0;
+    for (; i < r1 && j < r2; k++)
+    {
+        if (v1[i] <= v2[j]){
+            c[k] = v1[i++];
         } else{
-            d = m;
-        } 
+            c[k] = v2[j++];
+        }  
     }
 
-    if(vetor[d] == valor){
-        return 1;
-    } else{
-        return -1;
+    while (i < r1){
+        c[k++] = v1[i++];
     }
+    while (j < r2){
+        c[k++] = v2[j++];
+    }
+
+    k = 0;
+    for (i = 0; i < (r1 + r2); i++){
+        v1[i] = c[k++];
+    }  
+
+    free(c);
+}
+
+int removeRepetidos(int *v, int n){
+    int j = 1;
+    
+    for (int i = 1; i < n; i++){
+        if (v[i] != v[j - 1]){
+            v[j++] = v[i];
+        }
+    }
+
+    return j;
+}
+
+// Adiciona no final do vetor
+int calculaNMU(int *v, int n){
+    int j = 0;
+    
+    for(int i = 0; i < n - 1; i+=2){
+        v[n + j++] = v[i] + v[i+1];
+    }
+
+    return j;
 }
 
 int main(void){
-    int n, v[200000];
+    int n;
 
     scanf("%d", &n);
+
+    int *v = malloc(sizeof(int) * (2*n));
 
     for (int i = 0; i < n; i++){
         scanf("%d", &v[i]);
@@ -103,43 +108,25 @@ int main(void){
 
     mergesort(v, 0, n-1);
 
-    // Remover repetidos - Vai criar um "novo vetor" somente com os números que não repetem
-    int novoi = 0;
-    for(int i = 1; i < n; i++){
-        if(v[i] != v[novoi]){
-            v[++novoi] = v[i];
-        }
+    // N é o tamanho do novo vetor
+    int tam = removeRepetidos(v, n);
+
+    if(tam % 2 != 0){ // Sempre começa em 0 o vetor
+        v[tam++] = 1000000000;
     }
 
-    int novor = novoi;
+    int novor = calculaNMU(v, tam);
 
-/* Imprimir o Vetor
-    for(int i = 0; i < novor+1; i++){
-        printf("%d", v[i]);
-    }
-*/
+    // Junta o final do vetor (inseridos) com o vetor sem os repetidos
+    intercala(v, tam, v + tam, novor); 
 
-    if(novor % 2 == 0){ // Sempre começa em 0 o vetor
-        v[++novor] = 1000000000;
-    }
+    tam = removeRepetidos(v, tam+novor);
 
-    // Calcular NMU
-    int nmu[66000], nmui = -1;
-    for(int i = 0; i < novor; i+=2){
-        nmu[++nmui] = v[i] + v[i+1];
-        if(buscaBinaria(v, novor, nmu[nmui]) != -1){ // Se encontrar, não coloca no vetor
-            nmui--;
-        }
-    }
-
-    // Inserção no vetor
-    int *c = intercala(v, 0, novor, nmu, 0, nmui);
-
-    for(int i = 0; i <= (novor + nmui+2); i+=4){
-        printf("%d\n", c[i]);
+    for(int i = 0; i <= tam; i+=4){
+        printf("%d\n", v[i]);
     }
     
-    printf("Elementos: %d\n", (novor+nmui+2));
+    printf("Elementos: %d\n", tam);
 
     return 0;    
 }

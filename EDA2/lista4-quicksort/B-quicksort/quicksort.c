@@ -6,29 +6,48 @@
 #define cmpexch(A, B) {if(less(B, A)) exch(A, B);}
 
 int separa(int *v, int l, int r){
-    int i = l-1, j=r;
-    int c = v[r];
-    for(;;){
-        while (less(v[++i], c));
-        while(less(c, v[--j])){
-            if(i == j) break; // não dar seg. fault
-        }
-        if(i >= j) break;
-        exch(v[i], v[j]);
+  int tam = r - l + 1, j;
+  int c = v[r];
+  int *menores = malloc(sizeof(int) * tam);
+  int *maiores = malloc(sizeof(int) * tam);
+  int iMenor = 0, iMaior = 0, i;
+  int cPos;
+
+  for (i = l; i < r; i++) {
+    if (less(v[i], c)) {
+      menores[iMenor++] = v[i];
+    } else {
+      maiores[iMaior++] = v[i];
     }
-    exch(v[i], v[r]);
-    return i;
+  }
+
+  i = l;
+
+  for (j = 0; j < iMenor; j++) {
+    v[i++] = menores[j];
+  }
+
+  v[i] = c; // pivor
+  cPos = i;
+  i++;
+
+  for (j = 0; j < iMaior; j++) {
+    v[i++] = maiores[j];
+  }
+
+  free(menores);
+  free(maiores);
+
+  return cPos;
 }
 
 void quicksort(int *v, int l, int r){
-    if(l >= r) return; // critério de parada
-    exch(v[r-1], v[((r-l)/2) + 1]);
-    cmpexch(v[l], v[r-1]); // joga o menor para left
-    cmpexch(v[l], v[r]); // joga o menor para left
-    cmpexch(v[r-1], v[r]); // joga o menor para r-1
-    int j = separa(v, l+1, r-1);
-    quicksort(v, l, j-1);
-    quicksort(v, j+1, r);
+  if(l > r) return; // critério de parada
+  
+  int j = separa(v, l, r);
+  
+  quicksort(v, l, j-1);
+  quicksort(v, j+1, r);
 }
 
 int main(void){
