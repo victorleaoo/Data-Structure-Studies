@@ -24,9 +24,10 @@ int separa(int *v,int l, int r){
 void quicksort(int *v,int l, int r){
   if (l >= r) return; // Critério de parada
 
-  cmpexch(v[(l+r)/2], v[r]);
-  cmpexch(v[l], v[(l+r)/2]);
-  cmpexch(v[r], v[(l+r)/2]);
+  exch(v[r-1], v[(r-l)/2 + 1]);
+  cmpexch(v[l], v[r-1]);
+  cmpexch(v[l], v[r]);
+  cmpexch(v[r-1], v[r]);
 
   int j = separa(v, l, r);
   quicksort(v, l, j-1);

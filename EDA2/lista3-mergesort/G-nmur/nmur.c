@@ -1,132 +1,114 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define less(A,B) (A < B)
-#define lesseq(A,B) (A <= B)
+#define key(x) (x)
+#define less(a, b) (a < b)
+#define exch(A,B) {int t=A; A=B; B=t;}
+#define cmpexch(A,B) {if(less(B,A)) exch(A,B);}
 
-void merge(int *vetor, int l, int m, int r){
-    int l1 = l, r1 = m, l1i = l1;
-    int l2 = m+1, r2 = r, l2i = l2;
+int separa(int *v,int l, int r){
+  int aux = v[r], i, j = l;
 
-    int *c = malloc((r-l+1)*sizeof(int));
-    int ci = 0;
+  for(i = l; i < r; i++){
+    if(less(v[i], aux)){
+      exch(v[i], v[j]);
+      j++;
+    }
+  }    
+  
+  exch(v[j], v[r]);
 
-    int rc = r-l;
+  return j;
+}
 
-    while (l1i <= r1 && l2i <= r2){
-        if(lesseq(vetor[l1i], vetor[l2i])){
-            c[ci++] = vetor[l1i++];
-        } else{
-            c[ci++] = vetor[l2i++];
+void quicksort(int *v,int l, int r){
+  if (l >= r) return; // Critério de parada
+
+  cmpexch(v[(l+r)/2], v[r]);
+  cmpexch(v[l], v[(l+r)/2]);
+  cmpexch(v[r], v[(l+r)/2]);
+
+  int j = separa(v, l, r);
+  quicksort(v, l, j-1);
+  quicksort(v, j+1, r);
+}
+
+void merge(int *a, int r1, int *b, int r2){
+
+    int *c = malloc((r1 + r2) * sizeof(int));
+
+    int l1i = 0, l2i = 0, ci = 0;
+
+    while (l1i < r1 && l2i < r2){
+        if (less(a[l1i], b[l2i])){
+            c[ci++] = a[l1i++];
+        } else {
+            c[ci++] = b[l2i++];
         }
     }
-    
-    while (l1i <= r1){
-        c[ci++] = vetor[l1i++];
+
+    while (l1i < r1){
+        c[ci++] = a[l1i++];
     }
-    while (l2i <= r2){
-        c[ci++] = vetor[l2i++];
-    }
-    
-    l1i = l;
-    for(ci=0; ci <= rc; ci++){
-        vetor[l1i++] = c[ci];
+    while (l2i < r2){
+        c[ci++] = b[l2i++];
     }
 
-    free(c);
-}
-
-void mergesort(int *vetor, int l, int r){
-    if (l >= r) return;
-    int meio = (r - l)/2 + l;
-    mergesort(vetor, l, meio);
-    mergesort(vetor, meio+1, r);
-    merge(vetor, l, meio, r); // junta os dois vetores
-}
-
-void intercala(int *v1, int r1, int *v2, int r2)
-{
-    int *c = malloc((r1 + r2) * sizeof(int));
-    int i = 0, j = 0, k = 0;
-    for (; i < r1 && j < r2; k++)
-    {
-        if (v1[i] <= v2[j]){
-            c[k] = v1[i++];
-        } else{
-            c[k] = v2[j++];
-        }  
+    ci = 0;
+    for (l1i = 0; l1i < (r1 + r2); l1i++){
+        a[l1i] = c[ci++];
     }
-
-    while (i < r1){
-        c[k++] = v1[i++];
-    }
-    while (j < r2){
-        c[k++] = v2[j++];
-    }
-
-    k = 0;
-    for (i = 0; i < (r1 + r2); i++){
-        v1[i] = c[k++];
-    }  
 
     free(c);
 }
 
 int removeRepetidos(int *v, int n){
-    int j = 1;
-    
+    int tam = 1;
+
     for (int i = 1; i < n; i++){
-        if (v[i] != v[j - 1]){
-            v[j++] = v[i];
+        if (v[i] != v[tam - 1]){
+            v[tam++] = v[i];
         }
+            
     }
 
-    return j;
+    return tam;
 }
 
-// Adiciona no final do vetor
-int calculaNMU(int *v, int n){
-    int j = 0;
-    
-    for(int i = 0; i < n - 1; i+=2){
-        v[n + j++] = v[i] + v[i+1];
-    }
+int main(){
 
-    return j;
-}
-
-int main(void){
     int n;
-
     scanf("%d", &n);
 
-    int *v = malloc(sizeof(int) * (2*n));
+    int *v = malloc(sizeof(int) * (2 * n));
 
     for (int i = 0; i < n; i++){
         scanf("%d", &v[i]);
     }
 
-    mergesort(v, 0, n-1);
+    quicksort(v, 0, n-1);
 
-    // N é o tamanho do novo vetor
     int tam = removeRepetidos(v, n);
 
-    if(tam % 2 != 0){ // Sempre começa em 0 o vetor
+    if (tam % 2 != 0){
         v[tam++] = 1000000000;
     }
 
-    int novor = calculaNMU(v, tam);
+    int novo_tam = 0;
 
-    // Junta o final do vetor (inseridos) com o vetor sem os repetidos
-    intercala(v, tam, v + tam, novor); 
+    for (int i = 0; i < tam - 1; i += 2){
+        v[tam + novo_tam++] = v[i] + v[i + 1];
+    }
 
-    tam = removeRepetidos(v, tam+novor);
+    merge(v, tam, v + tam, novo_tam);
+    
+    tam = removeRepetidos(v, tam + novo_tam);
 
-    for(int i = 0; i <= tam; i+=4){
+    for (int i = 0; i < tam; i += 4){
         printf("%d\n", v[i]);
     }
-    
+
     printf("Elementos: %d\n", tam);
 
-    return 0;    
+    return 0;
 }

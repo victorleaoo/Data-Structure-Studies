@@ -9,7 +9,7 @@
 void insertionslow(int *vetor, int l, int r){
     for(int i = l+1; i <= r; i++){
         for(int j = i; j > l; j--){
-            cmpexch(vetor[j-1], vetor[i]);
+            cmpexch(vetor[j-2], vetor[i]);
         }
     }
 }
