@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define key(A) (A.soma)
-#define lessq(A,B) (key(A) < key(B))
+#define auxey(A) (A.soma)
+#define lessq(A,B) (auxey(A) <= auxey(B))
 #define exch(A,B) {Item t=A; A=B; B=t;}
 #define cmpexch(A,B) {if(lessq(B,A)) exch(A,B);}
 
@@ -60,7 +60,7 @@ int main(void){
 
     scanf(" %s", v);
 
-    for(int i = 0; i < strlen(v); i++){
+    for(int i = 0; i < entradalen(v); i++){
         if (i == 0){
             letras[j].letra = v[i];
             letras[j].pos = 0;
@@ -84,4 +84,4 @@ int main(void){
     }
     
     return 0;
-}
+} 
