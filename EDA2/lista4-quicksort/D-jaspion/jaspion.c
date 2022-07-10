@@ -73,6 +73,32 @@ void traduz(){
 
     quicksort(dict, 0, m-1);
 
+    n++;
+
+    while (n--)
+    {
+        char linha[81];
+        gets(linha);
+        char *b;
+        b = strtok(linha, " "); // separa a linha lida em diferentes partes separadas por " "
+        while (b != NULL)
+        {
+            int j = buscaBinaria(dict, m, b);
+            if(j < 0){
+                printf("%s", b);
+            } else{
+                printf("%s", dict[j].ptbr);
+            }
+            b = strtok(NULL, " ");
+            if(b == NULL){
+                printf("\n");
+            } else{
+                printf(" ");
+            }
+        }
+    }
+    
+/*
     for(int i = 0; i < n; i++){
         char b[81], p;
 
@@ -91,7 +117,17 @@ void traduz(){
                 break;
             } 
         }
+        if(i == n-1){
+            scanf(" %s", b);
+            int j = buscaBinaria(dict, m, b);
+            if(j < 0){
+                printf("%s\n", b);
+            } else{
+                printf("%s\n", dict[j].ptbr);
+            }
+        }
     }
+    */
 }
 
 

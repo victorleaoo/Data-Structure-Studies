@@ -96,10 +96,12 @@ int main(){
 
     int novo_tam = 0;
 
+    // Novo vetor com os números malucos
     for (int i = 0; i < tam - 1; i += 2){
         v[tam + novo_tam++] = v[i] + v[i + 1];
     }
 
+    // Junção dos vetores
     merge(v, tam, v + tam, novo_tam);
     
     tam = removeRepetidos(v, tam + novo_tam);
