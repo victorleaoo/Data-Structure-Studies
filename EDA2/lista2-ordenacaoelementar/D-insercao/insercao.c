@@ -14,8 +14,7 @@ void insertionsort(int *vetor, int l, int r){
         int j = i - 1;
         int tmp = vetor[j + 1]; //segura o valor
         while(less(tmp, vetor[j])){
-            vetor[j + 1] = vetor[j];
-            j--;
+            vetor[j + 1] = vetor[j--];
         }
         vetor[j + 1] = tmp;
     }
